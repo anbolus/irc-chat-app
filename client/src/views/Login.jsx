@@ -3,6 +3,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import AuthContext from '../utils/authProvider';
 import axios from "../utils/axios";
+import 'bootstrap/dist/css/bootstrap.css';
+import "../components/auth/login.css";
+import logo from "../ressources/img/logo.png";
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -24,10 +27,10 @@ export const Login = () => {
     setErrorMessage('');
   }, [username, password])
 
-  
+
   const handleSubmit = async (e) => {
     const body = { username: username, password: password };
-  
+
     const axiosConfig = {
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
@@ -39,10 +42,10 @@ export const Login = () => {
     try {
       const res = await axios.post(`http://localhost:5000/api/auth/login`, body, axiosConfig)
         .then(res => console.log(res))
-        console.log(res);
+      console.log(res);
       setSuccess(true);
-      navigate('/', {state: {username}});
-      
+      navigate('/', { state: { username } });
+
     } catch (error) {
       if (!error?.res) {
         setErrorMessage('No server response');
@@ -67,38 +70,56 @@ export const Login = () => {
           <p>
             <a href="/login">Sign In</a>
           </p>
-          
+
         </section>
       ) : (
+        <>
+          
+          <div className='wrapper d-flex align-items-center has-validation justify-content w-100'>
+            <form onSubmit={handleSubmit} className='loginForm was-validated'>
+              <h1>Login</h1>
+              <div class="form-floating mb-3 is-invalid">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="floatingInput"
+                  ref={userRef}
+                  autoComplete="off"
+                  focus
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder='Username'
+                  value={username}
+                  required />
+                <label for="floatingInput">Username</label>
+                <div className='invalid-feedback'>Please enter your username.</div>
+                <div className='valid-feedback'></div>
+              </div>
 
-        <section>
-          <h1>Login</h1>
-          <form onSubmit={handleSubmit}>
-                        <label htmlFor="username">Username:</label>
-                        <input
-                            type="text"
-                            id="username"
-                            ref={userRef}
-                            autoComplete="off"
-                            onChange={(e) => setUsername(e.target.value)}
-                            value={username}
-                            required
-                        />
+              <div class="form-floating mb-3 is-invalid">
+                <input
+                  type="password"
+                  class="form-control"
+                  id="floatingInput"
+                  ref={userRef}
+                  autoComplete="off"
+                  focus
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder='password'
+                  value={password}
+                  required />
+                <label for="floatingInput">Password</label>
+                <div className='invalid-feedback'>Please enter your password.</div>
+                <div className='valid-feedback'></div>
+              </div>
 
-                        <label htmlFor="password">Password:</label>
-                        <input
-                            type="password"
-                            id="password"
-                            onChange={(e) => setPassword(e.target.value)}
-                            value={password}
-                            required
-                        />
-                        <button>Sign In</button>
-                    </form>
-          <span>Don't have an account ? <Link to="/register">Register here</Link></span>
-          <span>Continue without an account</span>
 
-        </section>
+              <button type="submit" classname="btn btn-primary mt-2 w-100">Sign In</button><br />
+              <span>Don't have an account ? <Link to="/register">Register here</Link></span><br />
+              <span>Continue without an account</span>
+            </form><br />
+          </div></>
+
+
       )}
     </>
   )
