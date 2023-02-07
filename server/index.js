@@ -6,6 +6,7 @@ import authRoutes from "./routes/authRoutes.js";
 import http from "http";
 import cors from 'cors';
 import { Server } from "socket.io";
+import messageModel from "./model/messageModel.js"
 const port = 5000;
 app.use(express.json());
 app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
@@ -36,12 +37,18 @@ io.on("connection", (socket) => {
 
     socket.on("leave_room", (data) => {
         socket.leave(data);
-        console.log(`User with id : ${socket.id} left the room ${data}`);
+        console.log(`User with id : ${socket.id} left room ${data}`);
     })
 
-    socket.on("send_message", (data) => {
+    socket.on("send_message", async (data, req, res) => {
         console.log(data);
-        socket.to(data.room).emit("receive_message", data);
+        try {
+            const message = await messageModel.create(({room: data.room, author: data.author, message: data.message, time: data.time}));
+            socket.to(data.room).emit("receive_message", data);
+            console.log(`Received message : ${message}`);
+        } catch (error) {
+            console.log(error);
+        }
     });
 
     socket.on("disconnect", () => {
