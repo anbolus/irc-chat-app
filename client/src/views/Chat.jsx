@@ -19,6 +19,10 @@ const Chat = ({ socket, username, room }) => {
         }
     }
 
+    const leaveRoom = async () => {
+        await socket.emit("leave_room", room);
+    }
+
     useEffect(() => {
         socket.on("receive_message", (data) => {
             console.log(data);
@@ -63,7 +67,8 @@ const Chat = ({ socket, username, room }) => {
                         event.key === "Enter" && sendMessage();
                       }}
                 />
-                <button onClick={sendMessage}>&#9658;</button>
+                <button onClick={sendMessage}>&#9658;</button><br />
+                <button onClick={leaveRoom}>Leave the room</button>
             </div>
         </div>
     )
