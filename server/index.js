@@ -31,8 +31,9 @@ io.on("connection", (socket) => {
     console.log(`User connected to ${socket.id}`)
 
     socket.on("join_room", (data) => {
-        socket.join(data);
-        console.log(`User with id : ${socket.id} joined room ${data}`);
+        socket.join(data.room);
+        socket.to(data.room).emit("receive_message", data);
+        console.log(`User with id : ${socket.id} joined room ${data.room}`);
     })
 
     socket.on("leave_room", (data) => {
@@ -40,8 +41,7 @@ io.on("connection", (socket) => {
         console.log(`User with id : ${socket.id} left room ${data}`);
     })
 
-    socket.on("send_message", async (data, req, res) => {
-        console.log(data);
+    socket.on("send_message", async (data) => {
         try {
             const message = await messageModel.create(({room: data.room, author: data.author, message: data.message, time: data.time}));
             socket.to(data.room).emit("receive_message", data);
@@ -69,9 +69,6 @@ app.get("/api/auth/register/", (req, res) => {
 server.listen(port, () => {
     console.log(`Server running on port ${port}`);
 })
-
-
-
 
 mongoose.connect(uri, {
     useNewUrlParser: true,
