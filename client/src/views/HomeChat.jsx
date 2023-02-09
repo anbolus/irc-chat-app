@@ -8,6 +8,7 @@ const socket = io.connect("http://localhost:5000");
 const HomeChat = () => {
   const [username, setUsername] = useState("");
   const [room, setRoom] = useState("");
+  
 
   const joinRoom = async () => {
     if (username !== "" && room !== "") {
@@ -19,7 +20,7 @@ const HomeChat = () => {
       };
       
       await socket.emit("join_room", messageData);
-     // setRoom((list) => [...list, messageData]);
+      //setRoom((list) => [...list, messageData]);
          
     }
   }

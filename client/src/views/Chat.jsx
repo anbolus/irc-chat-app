@@ -29,7 +29,7 @@ const Chat = ({ socket, username, room }) => {
     }
 
     useEffect(() => {
-        socket.on("receive_message", (data) => {
+        socket.off().on("receive_message", (data) => {
             console.log(data);
             setMessageList((list) => [...list, data])
         });
@@ -39,7 +39,18 @@ const Chat = ({ socket, username, room }) => {
         <>
             <div className="title"><h3>Chat Live</h3></div>
             <div className='chat'>
-
+                <div className="rooms">
+                    {messageList.map((messageContent) =>{
+                        if(room !== "") {
+                            return (
+                                <div className="room">
+                                    <p>{messageContent.room}</p>
+                                </div>
+                            )
+                        }
+                        return null;
+                    })}
+                </div>
                 <div className="chat-header">
                 </div>
                 <div className="chat-body">
