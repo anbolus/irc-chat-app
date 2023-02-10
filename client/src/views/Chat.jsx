@@ -24,7 +24,6 @@ const Chat = ({ socket, username, room }) => {
         if (room !== "") {
             console.log(`${username} left the room`);
             await socket.emit("leave_room", room);
-
         }
     }
 
@@ -35,12 +34,19 @@ const Chat = ({ socket, username, room }) => {
         });
     }, [socket])
 
+    useEffect(() => {
+        socket.on("receive_history", (data) => {
+            console.log(data);
+            setMessageList((list) => [...list, data])
+        })
+    }, [socket])
+
     return (
         <>
             <div className="title"><h3>Chat Live</h3></div>
             <div className='chat'>
                 <div className="rooms">
-                    {messageList.map((messageContent) =>{
+                   {/*  {messageList.map((messageContent) =>{
                         if(room !== "") {
                             return (
                                 <div className="room">
@@ -49,7 +55,7 @@ const Chat = ({ socket, username, room }) => {
                             )
                         }
                         return null;
-                    })}
+                    })} */}
                 </div>
                 <div className="chat-header">
                 </div>

@@ -20,6 +20,7 @@ app.use("/api/auth/", authRoutes);
 
 const server = http.createServer(app);
 
+
 const io = new Server(server, {
     cors: {
         origin: "http://localhost:3000",
@@ -30,10 +31,18 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
     console.log(`User connected to ${socket.id}`)
 
-    socket.on("join_room", (data) => {
+    socket.on("join_room", async (data) => {
         socket.join(data.room);
+        const message = await messageModel.create(({room: data.room, author: data.author, message: data.message, time: data.time}));
         socket.to(data.room).emit("receive_message", data);
         console.log(`User with id : ${socket.id} joined room ${data.room}`);
+        //console.log(`Received message : ${message}`);
+
+    })
+    
+    socket.on("receive_history", async (data) => {
+        const history = await messageModel.find({room: data.room});
+        socket.to(data.room).emit("receive_history", data);
     })
 
     socket.on("leave_room", (data) => {
@@ -46,6 +55,7 @@ io.on("connection", (socket) => {
             const message = await messageModel.create(({room: data.room, author: data.author, message: data.message, time: data.time}));
             socket.to(data.room).emit("receive_message", data);
             console.log(`Received message : ${message}`);
+           
         } catch (error) {
             console.log(error);
         }
